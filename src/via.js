@@ -9895,9 +9895,6 @@ let resetFilterAll = function() {
         document.getElementById("image_panel").getElementsByTagName("img")[i].style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
     }
   }
-
-
-
 }
 
 
@@ -9914,16 +9911,13 @@ let handleMouseMove = function(e) {
     var xDiff = xPos - e.clientX;
     var yDiff = yPos - e.clientY;
 
-    // Condition that prevents large change in brightness or contrast when there is a large distance between cursor
-    // positions after switching from one image to another. Cheesy bug fix honestly
-    if (Math.abs(xDiff) < changeCutoff && Math.abs(yDiff) < changeCutoff) {
-        // Function that actually changes contrast and brightness
-        changeContrastBrightness(xDiff, yDiff);
-    }
+
+    // Function that actually changes contrast and brightness
+    changeContrastBrightness(xDiff, yDiff);
+
 
     // Update prior positions for next mouse movement
     xPos = e.clientX;
     yPos = e.clientY;
   }
-
 }
