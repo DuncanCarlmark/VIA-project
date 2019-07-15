@@ -306,12 +306,13 @@ var VIA_FLOAT_PRECISION = 3; // number of decimal places to include in float val
 
 
 // Variables for changing dynamically changing contrast
-let currentContrastLevel = 1;
-let currentBrightnessLevel = 1;
+//let currentContrastLevel = 1;
+//let currentBrightnessLevel = 1;
 let filterToggle = false;
 let xPos = 0;
 let yPos = 0;
 const filterIncrement = .0025;
+const changeCutoff = 20;
 
 //
 // Data structure to store metadata about file and regions
@@ -9816,26 +9817,39 @@ function polygon_to_bbox(pts) {
 */
 let changeContrastBrightness = function(xChange, yChange) {
 
-  if (currentContrastLevel + (yChange) * filterIncrement > filterIncrement){
-    currentContrastLevel += (yChange) * filterIncrement;
-  }
-
-  if (currentBrightnessLevel + (-1 * xChange) * filterIncrement > filterIncrement) {
-    currentBrightnessLevel += (-1 * xChange) * filterIncrement;
-  }
-
   if (document.getElementById('image_panel').getElementsByTagName('img')[0] != null) {
+    let valueRe = /\d+\.?\d*/g;
+    let tempMyString = (document.getElementsByClassName("visible")[0].style.filter).toString();
+    let tempValueArray = tempMyString.match(valueRe);
+
+    var currentContrastLevel = 1;
+    var currentBrightnessLevel = 1;
+    console.log(tempValueArray);
 
 
-    // Gets the specific image and sets its filter
-    document.getElementById('image_panel').getElementsByTagName('img')[0].filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
+    if (tempValueArray != null) {
+      currentContrastLevel = parseFloat(tempValueArray[0]);
+      currentBrightnessLevel = parseFloat(tempValueArray[1]);
+    }
 
-    // Gets the specific canvas and sets a filter to it
-    document.getElementById("bim0").style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
-   // Prints bot the image filter and the list of images ini the image panel
 
-    console.log(document.getElementById("bim0").filter);
+//    currentContrastLevel = parseInt(tempValueArray);
+//    currentBrightnessLevel = parseInt(tempValueArray);
 
+
+    if (currentContrastLevel + (yChange) * filterIncrement > filterIncrement){
+      currentContrastLevel += (yChange) * filterIncrement;
+    }
+
+    if (currentBrightnessLevel + (-1 * xChange) * filterIncrement > filterIncrement) {
+      currentBrightnessLevel += (-1 * xChange) * filterIncrement;
+    }
+
+
+
+     document.getElementsByClassName("visible")[0].style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
+
+     console.log(document.getElementsByClassName("visible")[0].style.filter);
    }
 }
 
@@ -9865,7 +9879,7 @@ let resetFilter = function() {
   currentBrightnessLevel = 1;
 
   if (document.getElementById('.image_panel').getElementsByTagName('img')[0] != null) {
-    document.getElementById('.image_panel').getElementsByTagName('img')[0].filter =
+    document.getElementsByClassName('visible')[0].style.filter =
       "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
   }
 
@@ -9885,8 +9899,12 @@ let handleMouseMove = function(e) {
     var xDiff = xPos - e.clientX;
     var yDiff = yPos - e.clientY;
 
-    // Function that actually changes contrast and brightness
-    changeContrastBrightness(xDiff, yDiff);
+    // Condition that prevents large change in brightness or contrast when there is a large distance between cursor
+    // positions after switching from one image to another. Cheesy bug fix honestly
+    if (Math.abs(xDiff) < changeCutoff && Math.abs(yDiff) < changeCutoff) {
+        // Function that actually changes contrast and brightness
+        changeContrastBrightness(xDiff, yDiff);
+    }
 
     // Update prior positions for next mouse movement
     xPos = e.clientX;
