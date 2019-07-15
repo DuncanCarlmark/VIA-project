@@ -306,12 +306,10 @@ var VIA_FLOAT_PRECISION = 3; // number of decimal places to include in float val
 
 
 // Variables for changing dynamically changing contrast
-//let currentContrastLevel = 1;
-//let currentBrightnessLevel = 1;
 let filterToggle = false;
 let xPos = 0;
 let yPos = 0;
-const filterIncrement = .0025;
+const filterIncrement = .0035;
 const changeCutoff = 20;
 
 //
@@ -9818,24 +9816,22 @@ function polygon_to_bbox(pts) {
 let changeContrastBrightness = function(xChange, yChange) {
 
   if (document.getElementById('image_panel').getElementsByTagName('img')[0] != null) {
+
+    // Define a regular expression to extract the values from the filter string
     let valueRe = /\d+\.?\d*/g;
     let tempMyString = (document.getElementsByClassName("visible")[0].style.filter).toString();
     let tempValueArray = tempMyString.match(valueRe);
 
+    // Default contrast and brightness levels to be referenced any time an image is being altered for the first
+    // time.
     var currentContrastLevel = 1;
     var currentBrightnessLevel = 1;
-    console.log(tempValueArray);
 
-
+    // Access the values from the contrast brightness string
     if (tempValueArray != null) {
       currentContrastLevel = parseFloat(tempValueArray[0]);
       currentBrightnessLevel = parseFloat(tempValueArray[1]);
     }
-
-
-//    currentContrastLevel = parseInt(tempValueArray);
-//    currentBrightnessLevel = parseInt(tempValueArray);
-
 
     if (currentContrastLevel + (yChange) * filterIncrement > filterIncrement){
       currentContrastLevel += (yChange) * filterIncrement;
@@ -9845,11 +9841,9 @@ let changeContrastBrightness = function(xChange, yChange) {
       currentBrightnessLevel += (-1 * xChange) * filterIncrement;
     }
 
+    // Actually change the values
+    document.getElementsByClassName("visible")[0].style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
 
-
-     document.getElementsByClassName("visible")[0].style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
-
-     console.log(document.getElementsByClassName("visible")[0].style.filter);
    }
 }
 
@@ -9871,17 +9865,38 @@ let toggleFilter = function(e) {
 
 
 /*
-  Resets the Contrast and Brightness tool to its default state
+  Resets the contrast and brightness to their default states for the current image
 */
 let resetFilter = function() {
   filterToggle = false;
-  currentContrastLevel = 1;
-  currentBrightnessLevel = 1;
+  var currentContrastLevel = 1;
+  var currentBrightnessLevel = 1;
 
-  if (document.getElementById('.image_panel').getElementsByTagName('img')[0] != null) {
-    document.getElementsByClassName('visible')[0].style.filter =
-      "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
+  // Reset the brightness of the one image in the image_panel
+  if (document.getElementsByClassName("visible")[0] != null) {
+    document.getElementsByClassName("visible")[0].style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
   }
+
+}
+
+/*
+    Resets the contrast and brightness to their default states for all images
+*/
+let resetFilterAll = function() {
+  filterToggle = false;
+  var currentContrastLevel = 1;
+  var currentBrightnessLevel = 1;
+
+  // Iterate through all images in the image_panel and reset their contrast and brightness
+  for(var i=0; i<document.getElementById("image_panel").getElementsByTagName("img").length; i++) {
+
+    if (document.getElementById("image_panel").getElementsByTagName("img")[i] != null) {
+
+        document.getElementById("image_panel").getElementsByTagName("img")[i].style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
+    }
+  }
+
+
 
 }
 

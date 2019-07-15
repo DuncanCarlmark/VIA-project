@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="e2844710-e811-4596-80b4-7a00daa618df" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/via.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/via.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/via.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/via.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -21,8 +20,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="43">
-              <caret line="296" column="75" selection-start-line="296" selection-start-column="75" selection-end-line="296" selection-end-column="75" />
+            <state relative-caret-position="298">
+              <caret line="297" column="142" selection-start-line="297" selection-start-column="142" selection-end-line="297" selection-end-column="142" />
             </state>
           </provider>
         </entry>
@@ -30,8 +29,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/via.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="364">
-              <caret line="9825" column="35" selection-start-line="9825" selection-start-column="35" selection-end-line="9825" selection-end-column="35" />
+            <state relative-caret-position="-452">
+              <caret line="9819" column="79" selection-start-line="9819" selection-start-column="79" selection-end-line="9819" selection-end-column="79" />
             </state>
           </provider>
         </entry>
@@ -63,6 +62,7 @@
       <find>img</find>
       <find>increment</find>
       <find>toolbar</find>
+      <find>reset</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -161,15 +161,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="43">
-          <caret line="296" column="75" selection-start-line="296" selection-start-column="75" selection-end-line="296" selection-end-column="75" />
+        <state relative-caret-position="298">
+          <caret line="297" column="142" selection-start-line="297" selection-start-column="142" selection-end-line="297" selection-end-column="142" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/via.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="364">
-          <caret line="9825" column="35" selection-start-line="9825" selection-start-column="35" selection-end-line="9825" selection-end-column="35" />
+        <state relative-caret-position="-452">
+          <caret line="9819" column="79" selection-start-line="9819" selection-start-column="79" selection-end-line="9819" selection-end-column="79" />
         </state>
       </provider>
     </entry>
