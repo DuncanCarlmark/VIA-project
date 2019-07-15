@@ -480,8 +480,9 @@
       </div> <!-- end of leftsidebar -->
 
       <!-- Main display area: contains image canvas, ... -->
-      <div id="display_area">
-        <div id="image_panel" class="display_area_content display_none">
+      <div id="display_area" onmousemove="handleMouseMove(event);" onmousedown="toggleFilter(event);"
+           onmouseup="toggleFilter(event);">
+        <div id="image_panel" class="display_area_content display_none" >
           <!-- buffer images using <img> element will be added here -->
 
           <!-- @todo: in future versions, this canvas will be replaced by a <svg> element -->

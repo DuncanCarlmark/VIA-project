@@ -304,6 +304,15 @@ var VIA_LEFTSIDEBAR_WIDTH_CHANGE          = 1;   // in rem
 var VIA_POLYGON_SEGMENT_SUBTENDED_ANGLE   = 5;   // in degree (used to approximate shapes using polygon)
 var VIA_FLOAT_PRECISION = 3; // number of decimal places to include in float values
 
+
+// Variables for changing dynamically changing contrast
+let currentContrastLevel = 1;
+let currentBrightnessLevel = 1;
+let filterToggle = false;
+let xPos = 0;
+let yPos = 0;
+const filterIncrement = .0025;
+
 //
 // Data structure to store metadata about file and regions
 //
@@ -9795,4 +9804,93 @@ function polygon_to_bbox(pts) {
     }
   }
   return [xmin, ymin, xmax-xmin, ymax-ymin];
+}
+
+
+
+
+/*
+  Accesses filter values for contrast and brightness and updates them based on the differences in x and y
+  mouse movement. Differences are scaled down so that more precise adjustments
+  can be made over a larger drag distance
+*/
+let changeContrastBrightness = function(xChange, yChange) {
+
+  if (currentContrastLevel + (yChange) * filterIncrement > filterIncrement){
+    currentContrastLevel += (yChange) * filterIncrement;
+  }
+
+  if (currentBrightnessLevel + (-1 * xChange) * filterIncrement > filterIncrement) {
+    currentBrightnessLevel += (-1 * xChange) * filterIncrement;
+  }
+
+  if (document.getElementById('image_panel').getElementsByTagName('img')[0] != null) {
+
+
+    // Gets the specific image and sets its filter
+    document.getElementById('image_panel').getElementsByTagName('img')[0].filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
+
+    // Gets the specific canvas and sets a filter to it
+    document.getElementById("bim0").style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
+   // Prints bot the image filter and the list of images ini the image panel
+
+    console.log(document.getElementById("bim0").filter);
+
+   }
+}
+
+
+/**
+  Either enables or disables the changing of contrast and brightness by monitoring
+  if the mouse is clicked down or not
+*/
+let toggleFilter = function(e) {
+  if (filterToggle) {
+    filterToggle = false;
+  }
+  else {
+    filterToggle = true;
+    xPos = e.clientX;
+    yPos = e.clientY;
+  }
+}
+
+
+/*
+  Resets the Contrast and Brightness tool to its default state
+*/
+let resetFilter = function() {
+  filterToggle = false;
+  currentContrastLevel = 1;
+  currentBrightnessLevel = 1;
+
+  if (document.getElementById('.image_panel').getElementsByTagName('img')[0] != null) {
+    document.getElementById('.image_panel').getElementsByTagName('img')[0].filter =
+      "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
+  }
+
+}
+
+
+/**
+  Updates the value of contrast and brightness in an image present on the screen
+  by tracking the x and y positions of the cursor to determine how far the cursor moves
+  . Runs constantly in background and is only triggered when filterToggle is
+  activated from the filter toggle button.
+*/
+let handleMouseMove = function(e) {
+
+  // Only change filter if the user selected the toggle
+  if (filterToggle) {
+    var xDiff = xPos - e.clientX;
+    var yDiff = yPos - e.clientY;
+
+    // Function that actually changes contrast and brightness
+    changeContrastBrightness(xDiff, yDiff);
+
+    // Update prior positions for next mouse movement
+    xPos = e.clientX;
+    yPos = e.clientY;
+  }
+
 }
