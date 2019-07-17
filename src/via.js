@@ -304,13 +304,23 @@ var VIA_LEFTSIDEBAR_WIDTH_CHANGE          = 1;   // in rem
 var VIA_POLYGON_SEGMENT_SUBTENDED_ANGLE   = 5;   // in degree (used to approximate shapes using polygon)
 var VIA_FLOAT_PRECISION = 3; // number of decimal places to include in float values
 
-
-// Variables for changing dynamically changing contrast
+//
+// Variables for dynamically changing contrast
+//
 let filterToggle = false;
 let xPos = 0;
 let yPos = 0;
 const filterIncrement = .0035;
 const changeCutoff = 20;
+
+//
+// Variables for overwriting default annotation text based on predefined labels
+//
+var classNames = ["select an attribute with keys", "large-osteophyte", "small-osteophyte", "sclerosis", "four", "five", "six"];
+var currentClassName = classNames[0];
+var currentClassIndex = 0;
+
+
 
 //
 // Data structure to store metadata about file and regions
@@ -6176,14 +6186,18 @@ function annotation_editor_get_metadata_row_html(row_id) {
       case 'region':
         if ( _via_img_metadata[_via_image_id].regions[row_id].region_attributes.hasOwnProperty(attr_id) ) {
           attr_value = _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id];
-        } else {
-          attr_placeholder = 'not defined yet!';
+        }
+
+        else {
+          attr_placeholder = classNames[0];
         }
       case 'file':
         if ( _via_img_metadata[_via_image_id].file_attributes.hasOwnProperty(attr_id) ) {
           attr_value = _via_img_metadata[_via_image_id].file_attributes[attr_id];
-        } else {
-          attr_placeholder = 'not defined yet!';
+        }
+        else {
+
+          attr_placeholder = classNames[0];
         }
       }
     }
@@ -6224,7 +6238,7 @@ function annotation_editor_get_metadata_row_html(row_id) {
           }
         } else {
           attr_value = '';
-          attr_placeholder = 'not defined yet!';
+          attr_placeholder = classNames[0];
         }
         break;
 
@@ -9928,24 +9942,16 @@ let handleMouseMove = function(e) {
  */
 let keySelectRegion = function(e) {
 
-    if (e.key === "1") {
-        select_region_shape('rect');
+    if ("123456".includes(e.key)) {
+        currentClassIndex = parseInt(e.key);
+        currentClassName = classNames[parseInt(e.key)];
     }
-    else if (e.key === "2") {
-        select_region_shape('circle');
-    }
-    else if (e.key === "3") {
-        select_region_shape('ellipse');
-    }
-    else if (e.key === "4") {
-        select_region_shape('polygon');
-    }
-    else if (e.key === "5") {
-        select_region_shape('point');
-    }
-    else if (e.key === "6") {
-        select_region_shape('polyline');
-    }
+
+}
+
+let customAttributeChange = function(e) {
+    var lastRow = document.getElementById
+
 
 }
 
