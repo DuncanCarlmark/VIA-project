@@ -9921,3 +9921,31 @@ let handleMouseMove = function(e) {
     yPos = e.clientY;
   }
 }
+
+
+/*
+ Allows user to select annotating region by using keyboard shortcuts mapped to number keys
+ */
+let keySelectRegion = function(e) {
+
+    if (e.key === "1") {
+        select_region_shape('rect');
+    }
+    else if (e.key === "2") {
+        select_region_shape('circle');
+    }
+    else if (e.key === "3") {
+        select_region_shape('ellipse');
+    }
+    else if (e.key === "4") {
+        select_region_shape('polygon');
+    }
+    else if (e.key === "5") {
+        select_region_shape('point');
+    }
+    else if (e.key === "6") {
+        select_region_shape('polyline');
+    }
+
+}
+
