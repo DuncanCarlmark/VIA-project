@@ -50,6 +50,7 @@
 
 "use strict";
 
+
 var VIA_VERSION      = '2.0.8';
 var VIA_NAME         = 'VGG Image Annotator';
 var VIA_SHORT_NAME   = 'VIA';
@@ -316,9 +317,33 @@ const changeCutoff = 20;
 //
 // Variables for overwriting default annotation text based on predefined labels
 //
-var classNames = ["select an attribute with keys", "large-osteophyte", "small-osteophyte", "sclerosis", "four", "five", "six"];
-var currentClassName = classNames[0];
 var currentClassIndex = 0;
+var colOneTitle = "class-name";
+var numColumns = 0;
+
+//
+// Data structures for custom attribute rows
+//
+function ClassOne() {
+  this.problem = 'Osteophyte (Big)';
+  this.bounding = 'rect';
+}
+
+function ClassTwo() {
+  this.problem = 'Osteophyte (Small)';
+  this.bounding = 'rect';
+}
+
+function ClassThree() {
+  this.problem = 'Sclerosis';
+  this.bounding = 'rect';
+}
+
+function ClassFour() {
+  this.problem = 'Joint Space Narrowing';
+  this.bounding = 'polyline';
+}
+
 
 
 
@@ -1486,15 +1511,20 @@ function _via_load_canvas_regions() {
 }
 
 // updates currently selected region shape
+
+// Iterates through all shape options and removes the class "selected" from whatever element
+// previously was selected
 function select_region_shape(sel_shape_name) {
   for ( var shape_name in VIA_REGION_SHAPE ) {
     var ui_element = document.getElementById('region_shape_' + VIA_REGION_SHAPE[shape_name]);
     ui_element.classList.remove('selected');
   }
 
+  // Takes the provided shape name and sets that shape to have the class "selected"
   _via_current_shape = sel_shape_name;
   var ui_element = document.getElementById('region_shape_' + _via_current_shape);
   ui_element.classList.add('selected');
+
 
   switch(_via_current_shape) {
   case VIA_REGION_SHAPE.RECT: // Fall-through
@@ -6078,6 +6108,18 @@ function annotation_editor_update_header_html() {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 function annotation_editor_update_metadata_html() {
   if ( ! _via_img_count ) {
     return;
@@ -6094,6 +6136,11 @@ function annotation_editor_update_metadata_html() {
         if ( _via_annotation_editor_mode === VIA_ANNOTATION_EDITOR_MODE.SINGLE_REGION ) {
           ae.appendChild( annotation_editor_get_metadata_row_html(_via_user_sel_region_id) );
         } else {
+
+          // THIS IS THE THING THAT IS FUCKING EVERYTHING UP
+          // EVERY TIME THAT IT UPDATES THE ANNOTATION EDITOR IT RELOADS ALL THE INDEXES AND
+          // WHEN THEY ALL GET RELOADED THEY ALL GET LOADED TO THE SAME KEY. FUCK. WE FUCKING DID IT
+
           for ( rindex = 0; rindex < _via_img_metadata[_via_image_id].regions.length; ++rindex ) {
             ae.appendChild( annotation_editor_get_metadata_row_html(rindex) );
           }
@@ -6107,6 +6154,23 @@ function annotation_editor_update_metadata_html() {
     break;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function annotation_editor_update_row(row_id) {
   var ae = document.getElementById('annotation_editor');
@@ -6168,7 +6232,9 @@ function annotation_editor_get_metadata_row_html(row_id) {
   }
 
   var attr_id;
+
   for ( attr_id in _via_attributes[_via_metadata_being_updated] ) {
+    console.log(attr_id);
     var col = document.createElement('span');
     col.setAttribute('class', 'col');
 
@@ -6182,23 +6248,70 @@ function annotation_editor_get_metadata_row_html(row_id) {
     var attr_value = '';
     var attr_placeholder = '';
     if ( _via_display_area_content_name === VIA_DISPLAY_AREA_CONTENT_NAME.IMAGE ) {
+      console.log("-------------------------------------------------------------------");
+
+
+      console.log(typeof _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id]);
+
       switch(_via_metadata_being_updated) {
       case 'region':
         if ( _via_img_metadata[_via_image_id].regions[row_id].region_attributes.hasOwnProperty(attr_id) ) {
+
+
+          console.log("RUNNING 1");
+
+          console.log(_via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id]);
+
+          if (typeof _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] == 'undefined' ||  _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] != 1) {
+            console.log("RUNNING !!!!!!!!!!!!");
+            switch (currentClassIndex) {
+              case 1:
+                var temp = new ClassOne();
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = temp.problem;
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] = 1;
+                break;
+              case 2:
+                var temp = new ClassTwo();
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = temp.problem;
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] = 1;
+
+                break;
+              case 3:
+                var temp = new ClassThree();
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = temp.problem;
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] = 1;
+
+                break;
+              case 4:
+                var temp = new ClassFour();
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = temp.problem;
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] = 1;
+
+                break;
+              default:
+                attr_placeholder = 'not defined yet boiiiiii!';
+              }
+            }
+
+
           attr_value = _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id];
         }
-
         else {
-          attr_placeholder = classNames[0];
+          console.log("RUNNING 2");
+          attr_placeholder = 'does this ever get triggered';
         }
+
+
       case 'file':
         if ( _via_img_metadata[_via_image_id].file_attributes.hasOwnProperty(attr_id) ) {
+          console.log("RUNNING 3");
           attr_value = _via_img_metadata[_via_image_id].file_attributes[attr_id];
         }
         else {
-
-          attr_placeholder = classNames[0];
+          console.log("RUNNING 4");
+          attr_placeholder = 'not defined yet!'
         }
+        console.log("-------------------------------------------------------------------");
       }
     }
 
@@ -6238,7 +6351,7 @@ function annotation_editor_get_metadata_row_html(row_id) {
           }
         } else {
           attr_value = '';
-          attr_placeholder = classNames[0];
+          attr_placeholder = 'not defined yet!';
         }
         break;
 
@@ -6288,11 +6401,11 @@ function annotation_editor_get_metadata_row_html(row_id) {
     switch(attr_type) {
     case 'text':
       col.innerHTML = '<textarea ' +
-        'onchange="annotation_editor_on_metadata_update(this)" ' +
-        'onfocus="annotation_editor_on_metadata_focus(this)" ' +
-        'title="' + attr_desc + '" ' +
-        'placeholder="' + attr_placeholder + '" ' +
-        'id="' + attr_html_id + '">' + attr_value + '</textarea>';
+      'onchange="annotation_editor_on_metadata_update(this)" ' +
+      'onfocus="annotation_editor_on_metadata_focus(this)" ' +
+      'title="' + attr_desc + '" ' +
+      'placeholder="' + attr_placeholder + '" ' +
+      'id="' + attr_html_id + '">' + attr_value + '</textarea>';
       break;
     case 'checkbox':
       var options = _via_attributes[_via_metadata_being_updated][attr_id].options;
@@ -6438,7 +6551,9 @@ function annotation_editor_get_metadata_row_html(row_id) {
 
     row.appendChild(col);
   }
-  return row;
+
+
+  return row
 }
 
 function annotation_editor_scroll_to_row(row_id) {
@@ -9940,18 +10055,42 @@ let handleMouseMove = function(e) {
 /*
  Allows user to select annotating region by using keyboard shortcuts mapped to number keys
  */
-let keySelectRegion = function(e) {
+var keySelectRegion = function(e) {
 
     if ("123456".includes(e.key)) {
         currentClassIndex = parseInt(e.key);
-        currentClassName = classNames[parseInt(e.key)];
     }
 
+
+    switch (currentClassIndex) {
+      case 1:
+        var temp = new ClassOne();
+        select_region_shape(temp.bounding);
+        break;
+      case 2:
+        var temp = new ClassTwo();
+        select_region_shape(temp.bounding);
+        break;
+      case 3:
+      var temp = new ClassThree();
+        select_region_shape(temp.bounding);
+        break;
+      case 4:
+        var temp = new ClassFour();
+        select_region_shape(temp.bounding);
+        break;
+      default:
+        select_region_shape('rect');
+      }
+    console.log(currentClassIndex);
+
 }
 
-let customAttributeChange = function(e) {
-    var lastRow = document.getElementById
 
 
-}
-
+// let resetAttributeRows = function(e) {
+//     var currentRow = document.getElementById(colOneTitle + "__" + (numColumns-1));
+//     currentRow.innerHTML(classNames[currentClassIndex]);
+//
+//
+// }
