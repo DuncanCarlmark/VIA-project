@@ -323,6 +323,8 @@ var numColumns = 0;
 
 //
 // Data structures for custom attribute rows
+// Use VIA_REGION_SHAPE to see what values bounding should have when adding or
+// changing classess
 //
 function ClassOne() {
   this.problem = 'Osteophyte (Big)';
@@ -6109,17 +6111,6 @@ function annotation_editor_update_header_html() {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
 function annotation_editor_update_metadata_html() {
   if ( ! _via_img_count ) {
     return;
@@ -6136,11 +6127,7 @@ function annotation_editor_update_metadata_html() {
         if ( _via_annotation_editor_mode === VIA_ANNOTATION_EDITOR_MODE.SINGLE_REGION ) {
           ae.appendChild( annotation_editor_get_metadata_row_html(_via_user_sel_region_id) );
         } else {
-
-          // THIS IS THE THING THAT IS FUCKING EVERYTHING UP
-          // EVERY TIME THAT IT UPDATES THE ANNOTATION EDITOR IT RELOADS ALL THE INDEXES AND
-          // WHEN THEY ALL GET RELOADED THEY ALL GET LOADED TO THE SAME KEY. FUCK. WE FUCKING DID IT
-
+          // This line reloads all rows for an attribute any time the UI element is loaded
           for ( rindex = 0; rindex < _via_img_metadata[_via_image_id].regions.length; ++rindex ) {
             ae.appendChild( annotation_editor_get_metadata_row_html(rindex) );
           }
@@ -6154,22 +6141,6 @@ function annotation_editor_update_metadata_html() {
     break;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function annotation_editor_update_row(row_id) {
@@ -6234,7 +6205,6 @@ function annotation_editor_get_metadata_row_html(row_id) {
   var attr_id;
 
   for ( attr_id in _via_attributes[_via_metadata_being_updated] ) {
-    console.log(attr_id);
     var col = document.createElement('span');
     col.setAttribute('class', 'col');
 
@@ -6248,22 +6218,18 @@ function annotation_editor_get_metadata_row_html(row_id) {
     var attr_value = '';
     var attr_placeholder = '';
     if ( _via_display_area_content_name === VIA_DISPLAY_AREA_CONTENT_NAME.IMAGE ) {
-      console.log("-------------------------------------------------------------------");
-
-
-      console.log(typeof _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id]);
 
       switch(_via_metadata_being_updated) {
+
       case 'region':
         if ( _via_img_metadata[_via_image_id].regions[row_id].region_attributes.hasOwnProperty(attr_id) ) {
 
-
-          console.log("RUNNING 1");
-
-          console.log(_via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id]);
-
-          if (typeof _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] == 'undefined' ||  _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] != 1) {
-            console.log("RUNNING !!!!!!!!!!!!");
+          // Checks if the given region has been created yet and if it has not been created the region is
+          // created with whatever the currentClassIndex is.
+          // This portion of code also runs when the UI is opened or closed so the 'isSet' portion
+          // also stops the program from reloading all regions under the same currentClassIndex
+          if (typeof _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] == 'undefined'
+          ||  _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] != 1) {
             switch (currentClassIndex) {
               case 1:
                 var temp = new ClassOne();
@@ -6289,29 +6255,24 @@ function annotation_editor_get_metadata_row_html(row_id) {
 
                 break;
               default:
-                attr_placeholder = 'not defined yet boiiiiii!';
+                attr_placeholder = 'not defined yet!';
               }
             }
-
 
           attr_value = _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id];
         }
         else {
-          console.log("RUNNING 2");
-          attr_placeholder = 'does this ever get triggered';
+          attr_placeholder = 'not defined yet!';
         }
 
 
       case 'file':
         if ( _via_img_metadata[_via_image_id].file_attributes.hasOwnProperty(attr_id) ) {
-          console.log("RUNNING 3");
           attr_value = _via_img_metadata[_via_image_id].file_attributes[attr_id];
         }
         else {
-          console.log("RUNNING 4");
           attr_placeholder = 'not defined yet!'
         }
-        console.log("-------------------------------------------------------------------");
       }
     }
 
@@ -10054,14 +10015,16 @@ let handleMouseMove = function(e) {
 
 /*
  Allows user to select annotating region by using keyboard shortcuts mapped to number keys
+ Changes currentClassIndex and the currently selected region
  */
-var keySelectRegion = function(e) {
+let keySelectRegion = function(e) {
 
+    // Changes the currentClassIndex only on a numeric key press
     if ("123456".includes(e.key)) {
         currentClassIndex = parseInt(e.key);
     }
 
-
+    // Changes the selected region based on new newly selected key
     switch (currentClassIndex) {
       case 1:
         var temp = new ClassOne();
@@ -10082,15 +10045,5 @@ var keySelectRegion = function(e) {
       default:
         select_region_shape('rect');
       }
-    console.log(currentClassIndex);
 
 }
-
-
-
-// let resetAttributeRows = function(e) {
-//     var currentRow = document.getElementById(colOneTitle + "__" + (numColumns-1));
-//     currentRow.innerHTML(classNames[currentClassIndex]);
-//
-//
-// }
