@@ -116,8 +116,9 @@ Brightness and Contrast Slider
    Moving left and right controls brightness while moving up and down controls contrast.
    To reset the image to its original state, two X buttons in the
    upper tool bar can be used to reset one image or all images.
+
  * Mouse events and CSS filters are used to create this functionality. Pressing down
- or letting up the left mouse toggles a Boolean (toggleFilter()) that controls the image's ability to change.
+   or letting up the left mouse toggles a Boolean (toggleFilter()) that controls the image's ability to change.
    Whenever mouse movement occurs and the toggle is on, the image changes its brightness and contrast
    based on the direction and distance the mouse travels. The distance is scaled down via filterIncrement.
 
