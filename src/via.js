@@ -6241,7 +6241,6 @@ function annotation_editor_get_metadata_row_html(row_id) {
             // attribute to each row that prevents it from being accidentally changed again
             switch (currentClassIndex) {
               case 1:
-
                 _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = ClassOne.problem;
                 _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] = 1;
                 break;
@@ -6253,7 +6252,6 @@ function annotation_editor_get_metadata_row_html(row_id) {
                 var temp = new ClassThree();
                 _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = ClassThree.problem;
                 _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] = 1;
-
                 break;
               case 4:
                 var temp = new ClassFour();
