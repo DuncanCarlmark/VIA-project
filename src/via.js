@@ -327,37 +327,40 @@ var numColumns = 0;
 // changing classess
 //
 function ClassOne() {
-  ClassOne.problem = 'Osteophyte (Big)';
-  ClassOne.bounding = 'rect';
+
   this.setProblem = function(newProblem) {
     this.problem = newProblem;
   }
-
 }
+ClassOne.problem = 'Osteophyte (Big)';
+ClassOne.bounding = 'rect';
 
 function ClassTwo() {
-  ClassTwo.problem = 'Osteophyte (Small)';
-  ClassTwo.bounding = 'rect';
+
   this.setProblem = function(newProblem) {
     this.problem = newProblem;
   }
 }
+ClassTwo.problem = 'Osteophyte (Small)';
+ClassTwo.bounding = 'rect';
 
 function ClassThree() {
-  ClassThree.problem = 'Sclerosis';
-  ClassThree.bounding = 'rect';
+
   this.setProblem = function(newProblem) {
     this.problem = newProblem;
   }
 }
+ClassThree.problem = 'Sclerosis';
+ClassThree.bounding = 'rect';
 
 function ClassFour() {
-  ClassFour.problem = 'Joint Space Narrowing';
-  ClassFour.bounding = 'polyline';
+
   this.setProblem = function(newProblem) {
     this.problem = newProblem;
   }
 }
+ClassFour.problem = 'Joint Space Narrowing';
+ClassFour.bounding = 'polyline';
 
 
 
@@ -6248,27 +6251,24 @@ function annotation_editor_get_metadata_row_html(row_id) {
             // attribute to each row that prevents it from being accidentally changed again
             switch (currentClassIndex) {
               case 1:
-                var temp = new ClassOne();
-                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = temp.problem;
+
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = ClassOne.problem;
                 _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] = 1;
                 break;
               case 2:
-                var temp = new ClassTwo();
-                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = temp.problem;
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = ClassTwo.problem;
                 _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] = 1;
-
                 break;
               case 3:
                 var temp = new ClassThree();
-                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = temp.problem;
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = ClassThree.problem;
                 _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] = 1;
 
                 break;
               case 4:
                 var temp = new ClassFour();
-                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = temp.problem;
+                _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] = ClassFour.problem;
                 _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] = 1;
-
                 break;
               default:
                 attr_placeholder = 'not defined yet!';
@@ -10035,8 +10035,7 @@ function handleMouseMove(e) {
  Changes currentClassIndex and the currently selected region
  */
 function keySelectRegion(e) {
-  console.log(ClassOne.bounding);
-  console.log(ClassOne.problem1234);
+
     // Changes the currentClassIndex only on a numeric key press
     if ("123456".includes(e.key)) {
         currentClassIndex = parseInt(e.key);
