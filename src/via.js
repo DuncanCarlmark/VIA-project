@@ -327,23 +327,36 @@ var numColumns = 0;
 // changing classess
 //
 function ClassOne() {
-  this.problem = 'Osteophyte (Big)';
-  this.bounding = 'rect';
+  ClassOne.problem = 'Osteophyte (Big)';
+  ClassOne.bounding = 'rect';
+  this.setProblem = function(newProblem) {
+    this.problem = newProblem;
+  }
+
 }
 
 function ClassTwo() {
-  this.problem = 'Osteophyte (Small)';
-  this.bounding = 'rect';
+  ClassTwo.problem = 'Osteophyte (Small)';
+  ClassTwo.bounding = 'rect';
+  this.setProblem = function(newProblem) {
+    this.problem = newProblem;
+  }
 }
 
 function ClassThree() {
-  this.problem = 'Sclerosis';
-  this.bounding = 'rect';
+  ClassThree.problem = 'Sclerosis';
+  ClassThree.bounding = 'rect';
+  this.setProblem = function(newProblem) {
+    this.problem = newProblem;
+  }
 }
 
 function ClassFour() {
-  this.problem = 'Joint Space Narrowing';
-  this.bounding = 'polyline';
+  ClassFour.problem = 'Joint Space Narrowing';
+  ClassFour.bounding = 'polyline';
+  this.setProblem = function(newProblem) {
+    this.problem = newProblem;
+  }
 }
 
 
@@ -6230,6 +6243,9 @@ function annotation_editor_get_metadata_row_html(row_id) {
           // also stops the program from reloading all regions under the same currentClassIndex
           if (typeof _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id] == 'undefined'
           ||  _via_img_metadata[_via_image_id].regions[row_id].region_attributes['isSet'] != 1) {
+
+            // Sets the HTML text to whatever the currentClassIndex corresponds to and adds another
+            // attribute to each row that prevents it from being accidentally changed again
             switch (currentClassIndex) {
               case 1:
                 var temp = new ClassOne();
@@ -6261,6 +6277,7 @@ function annotation_editor_get_metadata_row_html(row_id) {
 
           attr_value = _via_img_metadata[_via_image_id].regions[row_id].region_attributes[attr_id];
         }
+        // Otherwise a placeholder is set for the row
         else {
           attr_placeholder = 'not defined yet!';
         }
@@ -9903,7 +9920,7 @@ function polygon_to_bbox(pts) {
   mouse movement. Differences are scaled down so that more precise adjustments
   can be made over a larger drag distance
 */
-let changeContrastBrightness = function(xChange, yChange) {
+function changeContrastBrightness(xChange, yChange) {
 
   if (document.getElementById('image_panel').getElementsByTagName('img')[0] != null) {
 
@@ -9942,7 +9959,7 @@ let changeContrastBrightness = function(xChange, yChange) {
   Either enables or disables the changing of contrast and brightness by monitoring
   if the mouse is clicked down or not
 */
-let toggleFilter = function(e) {
+function toggleFilter(e) {
   if (filterToggle) {
     filterToggle = false;
   }
@@ -9957,7 +9974,7 @@ let toggleFilter = function(e) {
 /*
   Resets the contrast and brightness to their default states for the current image
 */
-let resetFilter = function() {
+function resetFilter() {
   filterToggle = false;
   var currentContrastLevel = 1;
   var currentBrightnessLevel = 1;
@@ -9972,7 +9989,7 @@ let resetFilter = function() {
 /*
     Resets the contrast and brightness to their default states for all images
 */
-let resetFilterAll = function() {
+function resetFilterAll() {
   filterToggle = false;
   var currentContrastLevel = 1;
   var currentBrightnessLevel = 1;
@@ -9994,7 +10011,7 @@ let resetFilterAll = function() {
   . Runs constantly in background and is only triggered when filterToggle is
   activated from the filter toggle button.
 */
-let handleMouseMove = function(e) {
+function handleMouseMove(e) {
 
   // Only change filter if the user selected the toggle
   if (filterToggle) {
@@ -10017,8 +10034,9 @@ let handleMouseMove = function(e) {
  Allows user to select annotating region by using keyboard shortcuts mapped to number keys
  Changes currentClassIndex and the currently selected region
  */
-let keySelectRegion = function(e) {
-
+function keySelectRegion(e) {
+  console.log(ClassOne.bounding);
+  console.log(ClassOne.problem1234);
     // Changes the currentClassIndex only on a numeric key press
     if ("123456".includes(e.key)) {
         currentClassIndex = parseInt(e.key);
@@ -10027,20 +10045,16 @@ let keySelectRegion = function(e) {
     // Changes the selected region based on new newly selected key
     switch (currentClassIndex) {
       case 1:
-        var temp = new ClassOne();
-        select_region_shape(temp.bounding);
+        select_region_shape(ClassOne.bounding);
         break;
       case 2:
-        var temp = new ClassTwo();
-        select_region_shape(temp.bounding);
+        select_region_shape(ClassTwo.bounding);
         break;
       case 3:
-      var temp = new ClassThree();
-        select_region_shape(temp.bounding);
+        select_region_shape(ClassThree.bounding);
         break;
       case 4:
-        var temp = new ClassFour();
-        select_region_shape(temp.bounding);
+        select_region_shape(ClassFour.bounding);
         break;
       default:
         select_region_shape('rect');
