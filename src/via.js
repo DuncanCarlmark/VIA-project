@@ -312,55 +312,45 @@ let filterToggle = false;
 let xPos = 0;
 let yPos = 0;
 const filterIncrement = .0035;
-const changeCutoff = 20;
 
 //
 // Variables for overwriting default annotation text based on predefined labels
 //
 var currentClassIndex = 0;
-var colOneTitle = "class-name";
-var numColumns = 0;
+
 
 //
 // Data structures for custom attribute rows
 // Use VIA_REGION_SHAPE to see what values bounding should have when adding or
 // changing classess
 //
-function ClassOne() {
-
-  this.setProblem = function(newProblem) {
-    this.problem = newProblem;
-  }
-}
+function ClassOne() {}
 ClassOne.problem = 'Osteophyte (Big)';
 ClassOne.bounding = 'rect';
-
-function ClassTwo() {
-
-  this.setProblem = function(newProblem) {
-    this.problem = newProblem;
-  }
+ClassOne.setProblem = function(newProblem) {
+  this.problem = newProblem;
 }
+
+function ClassTwo() {}
 ClassTwo.problem = 'Osteophyte (Small)';
 ClassTwo.bounding = 'rect';
-
-function ClassThree() {
-
-  this.setProblem = function(newProblem) {
-    this.problem = newProblem;
-  }
+ClassTwo.setProblem = function(newProblem) {
+  this.problem = newProblem;
 }
+
+function ClassThree() {}
 ClassThree.problem = 'Sclerosis';
 ClassThree.bounding = 'rect';
-
-function ClassFour() {
-
-  this.setProblem = function(newProblem) {
-    this.problem = newProblem;
-  }
+ClassThree.setProblem = function(newProblem) {
+  this.problem = newProblem;
 }
+
+function ClassFour() {}
 ClassFour.problem = 'Joint Space Narrowing';
 ClassFour.bounding = 'polyline';
+ClassFour.setProblem = function(newProblem) {
+  this.problem = newProblem;
+}
 
 
 
@@ -9913,48 +9903,6 @@ function polygon_to_bbox(pts) {
 }
 
 
-
-
-/*
-  Accesses filter values for contrast and brightness and updates them based on the differences in x and y
-  mouse movement. Differences are scaled down so that more precise adjustments
-  can be made over a larger drag distance
-*/
-function changeContrastBrightness(xChange, yChange) {
-
-  if (document.getElementById('image_panel').getElementsByTagName('img')[0] != null) {
-
-    // Define a regular expression to extract the values from the filter string
-    let valueRe = /\d+\.?\d*/g;
-    let tempMyString = (document.getElementsByClassName("visible")[0].style.filter).toString();
-    let tempValueArray = tempMyString.match(valueRe);
-
-    // Default contrast and brightness levels to be referenced any time an image is being altered for the first
-    // time.
-    var currentContrastLevel = 1;
-    var currentBrightnessLevel = 1;
-
-    // Access the values from the contrast brightness string
-    if (tempValueArray != null) {
-      currentContrastLevel = parseFloat(tempValueArray[0]);
-      currentBrightnessLevel = parseFloat(tempValueArray[1]);
-    }
-
-    if (currentContrastLevel + (yChange) * filterIncrement > filterIncrement){
-      currentContrastLevel += (yChange) * filterIncrement;
-    }
-
-    if (currentBrightnessLevel + (-1 * xChange) * filterIncrement > filterIncrement) {
-      currentBrightnessLevel += (-1 * xChange) * filterIncrement;
-    }
-
-    // Actually change the values
-    document.getElementsByClassName("visible")[0].style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
-
-   }
-}
-
-
 /**
   Either enables or disables the changing of contrast and brightness by monitoring
   if the mouse is clicked down or not
@@ -9996,9 +9944,7 @@ function resetFilterAll() {
 
   // Iterate through all images in the image_panel and reset their contrast and brightness
   for(var i=0; i<document.getElementById("image_panel").getElementsByTagName("img").length; i++) {
-
     if (document.getElementById("image_panel").getElementsByTagName("img")[i] != null) {
-
         document.getElementById("image_panel").getElementsByTagName("img")[i].style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
     }
   }
@@ -10012,21 +9958,49 @@ function resetFilterAll() {
   activated from the filter toggle button.
 */
 function handleMouseMove(e) {
-
   // Only change filter if the user selected the toggle
   if (filterToggle) {
     var xDiff = xPos - e.clientX;
     var yDiff = yPos - e.clientY;
-
-
     // Function that actually changes contrast and brightness
     changeContrastBrightness(xDiff, yDiff);
-
-
     // Update prior positions for next mouse movement
     xPos = e.clientX;
     yPos = e.clientY;
   }
+}
+
+/*
+  Accesses filter values for contrast and brightness and updates them based on the differences in x and y
+  mouse movement. Differences are scaled down so that more precise adjustments
+  can be made over a larger drag distance
+*/
+function changeContrastBrightness(xChange, yChange) {
+
+  if (document.getElementById('image_panel').getElementsByTagName('img')[0] != null) {
+    // Define a regular expression to extract the values from the filter string
+    let valueRe = /\d+\.?\d*/g;
+    let tempMyString = (document.getElementsByClassName("visible")[0].style.filter).toString();
+    let tempValueArray = tempMyString.match(valueRe);
+
+    // Default contrast and brightness levels to be referenced any time an image is being altered for the first
+    // time.
+    var currentContrastLevel = 1;
+    var currentBrightnessLevel = 1;
+
+    // Access the values from the contrast brightness string
+    if (tempValueArray != null) {
+      currentContrastLevel = parseFloat(tempValueArray[0]);
+      currentBrightnessLevel = parseFloat(tempValueArray[1]);
+    }
+
+    // Scale the values based on the cursor movement
+    currentContrastLevel += (yChange) * filterIncrement;
+    currentBrightnessLevel += (-1 * xChange) * filterIncrement;
+
+    // Actually change the values
+    document.getElementsByClassName("visible")[0].style.filter = "contrast("+(currentContrastLevel)+") brightness("+(currentBrightnessLevel)+")";
+   }
 }
 
 
@@ -10037,9 +10011,10 @@ function handleMouseMove(e) {
 function keySelectRegion(e) {
 
     // Changes the currentClassIndex only on a numeric key press
-    if ("123456".includes(e.key)) {
+    if ("1234".includes(e.key)) {
         currentClassIndex = parseInt(e.key);
     }
+
 
     // Changes the selected region based on new newly selected key
     switch (currentClassIndex) {
